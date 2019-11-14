@@ -1,4 +1,4 @@
-const {Logger, FileLogger} = require('simple.logger');
+const {Logger: ConsoleLogger, FileLogger} = require('simple.logger');
 
 const optionalOptions = {
     level: 'info',
@@ -9,5 +9,6 @@ const optionalOptions = {
     showChannel: true,
     colored: true
 };
-const LoggerCreator = process.env.NODE_ENV === "production" ? FileLogger : Logger;
-module.exports = new LoggerCreator(optionalOptions);
+const Logger = process.env.NODE_ENV === "production" ? FileLogger : ConsoleLogger;
+const logger = new Logger(optionalOptions);
+module.exports = {logger};

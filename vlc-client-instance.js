@@ -1,73 +1,57 @@
-let VLCTelnetClient = require('./vlc-telnet-client').VLCTelnetClient;
+const {VLCTelnetClient} = require('./vlc-telnet-client');
 
 // Describes a single VLC instance with telnet API included.
 class VLCClientInstance extends VLCTelnetClient {
 
-    constructor(telnetPort, password) {
-        super();
-        this.telnetConnection = new VLCTelnetClient();
-        this.telnetConnection.init(telnetPort, password);
-        this.playingStatus = setInterval(() => {
-            this.playingStatus = this.getPlayingStatus();
-        },500);
-
-        this.currentVideoTime = setInterval(() => {
-            this.currentVideoTime = this.getTime();
-        },500);
+    constructor(port, password, ip = "127.0.0.1") {
+        super(port, password, ip);
     }
+
+    async init() {
+        await super.init();
+    }
+
     async pause() {
-        let res = await this.telnetConnection.send('pause');
-        return res;
-    }
-
-    async onPause() {
-
+        return this.send('pause');
     }
 
     async play() {
-        let res = await this.telnetConnection.send('play');
-        return res;
+        return this.send('play');
     }
 
-    async onPlay() {
-
+    async stop() {
+        return this.send('stop')
     }
 
     async getTime() {
-        let res = await this.telnetConnection.send('get_time');
-        return res;
+        return this.send('get_time');
     }
 
     async seek(timeToSeek) {
-        let res = await this.telnetConnection.send(`seek ${timeToSeek}`);
-        return res;
+        return this.send(`seek ${timeToSeek}`);
     }
 
     async getStreamLength() {
-        let res = await this.telnetConnection.send('get_length');
-        return res;
+        return this.send('get_length');
     }
 
-    // Checks whether the video is playing / paused.
-    // 1 - Stream is playing
-    // 0 - Otherwise
-    async getPlayingStatus() {
-        let res = await this.telnetConnection.send('is_playing');
-        return res;
+    async getVlcStatus() {
+        const status = await this.send('status');
+        let isPlaying = this._isPlayingFromStatus(status);
+        return {isPlaying}
+    }
+
+    _isPlayingFromStatus(status) {
+        const state = status.match(/\( state (.*) \)/)[1];
+        if (state === "paused" || state === "stopped") {
+            return false;
+        } else if (state === "playing") {
+            return true;
+        } else {
+            throw new Error('state result from vlc telnet not match playing or paused')
+        }
     }
 
 }
 
 module.exports = {VLCClientInstance};
-
-// let a = new VLCClientInstance(4212, 1234);
-//
-// let res = a.init(4212, 1234);
-//
-// async function f() {
-//     await res;
-//     return res;
-//
-// }
-//
-// f();
