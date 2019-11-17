@@ -5,6 +5,19 @@ class VLCClientInstance extends VLCTelnetClient {
 
     constructor(port, password, ip = "127.0.0.1") {
         super(port, password, ip);
+        this.syncPoint = 0;
+    }
+
+    async sync() {
+        this.syncPoint = parseInt(await this.getTime(), 10);
+    }
+
+    async jumpFromSyncPoint(time) {
+        return this.seek(this.syncPoint + time);
+    }
+
+    async deltaFromSyncPoint() {
+        return await this.getTime() - this.syncPoint;
     }
 
     async init() {

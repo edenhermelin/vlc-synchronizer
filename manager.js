@@ -2,7 +2,6 @@ const {VLCClientInstance} = require('./vlc-client-instance');
 const {VLCLauncher} = require('./vlc-launcher');
 const {logger} = require('./logger');
 const config = require('./config');
-
 const telnetPassword = config.telnetPassword;
 let lastPortInUsed = config.startPort;
 let vlcId = 1;
@@ -25,6 +24,12 @@ const openNewVlc = async (file) => {
     logger.info(`open vlc with id:${id} on port: ${port} with password:${telnetPassword} with file: ${file}`);
     const telnetInstance = new VLCClientInstance(port, telnetPassword);
     await telnetInstance.init();
+    setTimeout(async () => {
+        if (file) {
+            await telnetInstance.pause();
+            await telnetInstance.seek(0);
+        }
+    }, 300);
     logger.info(`connect to vlc with id:${id} on port: ${port} with password: ${telnetPassword}`);
     vlcProcesses[id] = vlcProcess;
     vlcClients[id] = telnetInstance;
@@ -42,6 +47,16 @@ const playAll = async () => {
 const stopAll = async () => {
     return Promise.all(Object.values(vlcClients).map(vlcClient => vlcClient.stop()))
 };
-const seekAll = async (time) => {
-    return Promise.all(Object.values(vlcClients).map(vlcClient => vlcClient.seek(time)))
+const seekAllFromSyncPoint = async (time) => {
+    return Promise.all(Object.values(vlcClients).map(vlcClient => vlcClient.jumpFromSyncPoint(time)));
 };
+
+const saveSyncPoint = async () => {
+    return Promise.all(Object.values(vlcClients).map(vlcClient => vlcClient.sync()));
+};
+
+const syncAll = async () => {
+    const delta = await Object.values(vlcClients)[0].deltaFromSyncPoint();
+    await seekAllFromSyncPoint(delta);
+};
+module.exports = {saveSyncPoint, syncAll, openNewVlc, pauseAll, playAll, stopAll, seekAllFromSyncPoint};

@@ -1,7 +1,7 @@
 const {Logger: ConsoleLogger, FileLogger} = require('simple.logger');
 
 const optionalOptions = {
-    level: 'info',
+    level: 'debug',
     prefix: '',
     outStream: [process.stdout, process.stderr],
     showTime: true,

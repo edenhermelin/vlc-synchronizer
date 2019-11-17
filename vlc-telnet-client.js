@@ -1,3 +1,5 @@
+const {logger} = require("./logger");
+
 const Telnet = require('telnet-client');
 
 class VLCTelnetClient {
@@ -34,8 +36,11 @@ class VLCTelnetClient {
         if (!this.isInitialyezed) {
             throw new Error('invoke init before send');
         }
+        logger.debug(`send cmd:${cmd} to telnet connection on port ${this.params.port} `);
         let res = await this.connection.send(cmd, {waitfor: "> "});
-        return res.replace(/\r\n> |> /g, "");
+        const parseRes = res.replace(/\r\n> |> /g, "");
+        logger.debug(`got response:${parseRes} to commend:${cmd} from telnet connection on port ${this.params.port} `);
+        return parseRes;
     }
 }
 
