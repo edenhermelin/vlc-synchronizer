@@ -37,8 +37,8 @@ class VLCTelnetClient {
             throw new Error('invoke init before send');
         }
         logger.debug(`send cmd:${cmd} to telnet connection on port ${this.params.port} `);
-        let res = await this.connection.send(cmd, {waitfor: "> "});
-        const parseRes = res.replace(/\r\n> |> /g, "");
+        let res = await this.connection.send(cmd, {waitfor: "meni-hermelin-cli> "});
+        const parseRes = res.replace(/\r\nmeni-hermelin-cli> |meni-hermelin-cli> /g, "");
         logger.debug(`got response:${parseRes} to commend:${cmd} from telnet connection on port ${this.params.port} `);
         return parseRes;
     }
