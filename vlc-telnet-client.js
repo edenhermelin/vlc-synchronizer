@@ -1,16 +1,13 @@
+const {logger} = require("./logger");
+
 const Telnet = require('telnet-client');
 
 class VLCTelnetClient {
-    constructor() {
-        this.connection = new Telnet();
-        this.isInitialyezed = false;
-    }
-
-    async init(port, password, ip = "127.0.0.1") {
+    constructor(port, password, ip = "127.0.0.1") {
         if (!port || !password) {
             throw new Error('should send port and password');
         }
-        const params = {
+        this.params = {
             host: ip,
             port,
             password,
@@ -18,19 +15,32 @@ class VLCTelnetClient {
             passwordPrompt: 'Password: ',
             shellPrompt: '> '
         };
+        this.connection = new Telnet();
+        this.isInitialyezed = false;
+    }
 
+    async init() {
         const ready = new Promise(resolve => this.connection.on('ready', resolve));
-        await this.connection.connect(params);
+        await this.connection.connect(this.params);
         await ready;
         this.isInitialyezed = true;
+    }
+
+    async listenToShell(onData) {
+        const shell = await this.connection.shell();
+        shell.on('data', (data) => onData(data.toString()))
+
     }
 
     async send(cmd) {
         if (!this.isInitialyezed) {
             throw new Error('invoke init before send');
         }
-        let res = await this.connection.send(cmd, {waitfor: "\r\n> "});
-        return res.replace('\r\n> ', "");
+        logger.debug(`send cmd:${cmd} to telnet connection on port ${this.params.port} `);
+        let res = await this.connection.send(cmd, {waitfor: "meni-hermelin-cli> "});
+        const parseRes = res.replace(/\r\nmeni-hermelin-cli> |meni-hermelin-cli> /g, "");
+        logger.debug(`got response:${parseRes} to commend:${cmd} from telnet connection on port ${this.params.port} `);
+        return parseRes;
     }
 }
 
