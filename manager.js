@@ -3,12 +3,12 @@ const {VLCLauncher} = require('./vlc-launcher');
 const {logger} = require('./logger');
 const config = require('./config');
 const telnetPassword = config.telnetPassword;
-let lastPortInUsed = config.startPort;
+let lastPortInUse = config.initialPort;
 let vlcId = 1;
 const vlcProcesses = {};
 const vlcClients = {};
 const openNewVlc = async (file) => {
-    let port = lastPortInUsed++;
+    let port = lastPortInUse++;
     const id = vlcId++;
     const vlcProcess = new VLCLauncher(
         port,
