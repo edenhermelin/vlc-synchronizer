@@ -2,7 +2,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
-const {saveSyncPoint, syncAll, seekAllFromSyncPoint, pauseAll, playAll, openNewVlc} = require('../manager');
+const {saveSyncPoint, syncAll, seekAllFromSyncPoint, pauseAll, playAll, openNewVlc} = require('../src/services/vlc/index');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -14,7 +14,8 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true,
         }
     });
 

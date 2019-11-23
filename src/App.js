@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import CompoundSlider from './components/compound-slider';
+import 'semantic-ui-css/semantic.min.css'
+import VlcController from './components/vlc-controller/vlc-controller';
 
 function App() {
   return (
     <div className="App">
-      <CompoundSlider min={0} max={7402}/>
+      <VlcController/>
     </div>
   );
 }
