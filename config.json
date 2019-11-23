@@ -1,5 +1,5 @@
 {
-  "VLCPath": "D:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe",
+  "VLCPath": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
   "initialPort": 666,
   "telnetPassword": "123"
 }

@@ -7,7 +7,7 @@
   "scripts": {
     "electron-dev": "cross-env ELECTRON_START_URL=http://localhost:5000 electron .",
     "prod": "electron .",
-    "start" : "nf start",
+    "start": "nf start",
     "build": "electron-builder",
     "react-start": "cross-env BROWSER=none react-scripts start",
     "react-build": "react-scripts build",
@@ -33,6 +33,8 @@
     "react-compound-slider": "^2.4.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.2.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.1",
     "simple.logger": "^2.0.1",
     "telnet-client": "^1.2.3"
   },

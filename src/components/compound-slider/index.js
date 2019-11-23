@@ -16,9 +16,13 @@ const sliderStyle = {
 
 const formatTick = (seconds) => moment().startOf('day').seconds(seconds).format('HH:mm:ss');
 
-const getTickValues = (min, max, ticks) => scaleLinear().domain([min, max]).range([min, max]).nice().ticks(ticks);
+const getTickValues = (min, max, ticks) => {
+    const scale = scaleLinear().domain([min, max]).range([min, max]).nice().ticks(ticks);
+    // remove the first tick (0) and last (end of video)
+    return scale.slice(1, scale.length - 1);
+};
 
-const CompoundSlider = ({min, max, ticks, sliderSteps}) => {
+const CompoundSlider = ({min, max, ticks, sliderSteps, onUpdatedChanged, onSelectedChanged}) => {
     const [selected, setSelected] = useState(0);
     const [updated, setUpdated] = useState(0);
 
@@ -32,8 +36,16 @@ const CompoundSlider = ({min, max, ticks, sliderSteps}) => {
                     step={(max - min) / sliderSteps}
                     domain={[+min, +max]}
                     rootStyle={sliderStyle}
-                    onUpdate={([seconds]) => setUpdated(seconds)}
-                    onChange={([seconds]) => setSelected(seconds)}
+                    onUpdate={([seconds]) => {
+                        const rounded = Math.round(seconds);
+                        setUpdated(rounded);
+                        onUpdatedChanged(rounded);
+                    }}
+                    onChange={([seconds]) => {
+                        const rounded = Math.round(seconds);
+                        setSelected(rounded);
+                        onSelectedChanged(rounded);
+                    }}
                     values={[+selected]}
                 >
                     <Rail>
@@ -88,14 +100,21 @@ const CompoundSlider = ({min, max, ticks, sliderSteps}) => {
 };
 
 CompoundSlider.propTypes = {
-    min: PropTypes.number.isRequired,
     max: PropTypes.number.isRequired,
+    min: PropTypes.number,
     ticks: PropTypes.number,
     sliderSteps: PropTypes.number,
+    onUpdatedChanged: PropTypes.func,
+    onSelectedChanged: PropTypes.func,
 };
 CompoundSlider.defaultProps = {
+    min: 0,
     ticks: 10,
     sliderSteps: 500,
+    onUpdatedChanged: () => {
+    },
+    onSelectedChanged: () => {
+    },
 };
 
 export default CompoundSlider;
