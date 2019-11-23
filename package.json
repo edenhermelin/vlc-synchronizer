@@ -2,10 +2,17 @@
   "name": "electron-quick-start",
   "version": "1.0.0",
   "description": "A minimal Electron application",
-  "main": "main.js",
+  "main": "electron/electron-starter.js",
+  "homepage": "./",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
+    "electron-dev": "cross-env ELECTRON_START_URL=http://localhost:5000 electron .",
+    "prod": "electron .",
+    "start" : "nf start",
+    "build": "electron-builder",
+    "react-start": "cross-env BROWSER=none react-scripts start",
+    "react-build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -18,12 +25,21 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "dependencies": {
+    "cross-env": "^6.0.3",
+    "d3-scale": "^3.2.0",
+    "moment": "^2.24.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.12.0",
+    "react-compound-slider": "^2.4.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.2.0",
     "simple.logger": "^2.0.1",
     "telnet-client": "^1.2.3"
   },
   "devDependencies": {
     "electron": "^7.1.1",
-    "electron-builder": "^22.1.0"
+    "electron-builder": "^22.1.0",
+    "foreman": "^3.0.1"
   },
   "build": {
     "win": {
@@ -37,5 +53,20 @@
         }
       ]
     }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

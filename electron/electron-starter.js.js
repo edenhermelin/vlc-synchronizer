@@ -1,7 +1,8 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
-const {saveSyncPoint, syncAll, seekAllFromSyncPoint, pauseAll, playAll, openNewVlc} = require('./manager');
+const url = require('url');
+const {saveSyncPoint, syncAll, seekAllFromSyncPoint, pauseAll, playAll, openNewVlc} = require('../manager');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -17,8 +18,16 @@ function createWindow() {
         }
     });
 
+    // in dev use the ENV variable. in production opens the compiled file
+    const startUrl = process.env.ELECTRON_START_URL || url.format({
+        pathname: path.join(__dirname, '/../build/index.html'),
+        protocol: 'file:',
+        slashes: true
+    });
+
     // and load the index.html of the app.
-    mainWindow.loadFile('index.html');
+    mainWindow.loadURL(startUrl);
+
     ipcMain.on('pause', async () => {
         await pauseAll();
         await syncAll();
@@ -46,7 +55,6 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
-    mainWindow.on;
 }
 
 // This method will be called when Electron has finished
