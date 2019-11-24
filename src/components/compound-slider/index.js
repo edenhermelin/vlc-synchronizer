@@ -9,6 +9,30 @@ import { SliderRail } from './slider-rail';
 import { Tick } from './tick';
 import { Track } from './track';
 
+const fromMonolo = {
+    wholeLength: 7204,
+    videos: [
+        {
+            length: 3600,
+            relativeStartPoint: 1200,
+        },
+        {
+            length: 6541,
+            relativeStartPoint: 600,
+        },
+        {
+            length: 6000,
+            relativeStartPoint: 100,
+        },
+        {
+            length: 700,
+            relativeStartPoint: 2500,
+        },
+    ],
+};
+
+const slidersColors = ['purple', 'blue', 'green', 'yellow'];
+
 const sliderStyle = {
     position: 'relative',
     width: '100%',
@@ -22,6 +46,22 @@ const getTickValues = (min, max, ticks) => {
     return scale.slice(1, scale.length - 1);
 };
 
+const getRailByPropsGenerator = (videosData) => ({getRailProps}) => {
+    const getPercentFromWholeVideo = (num) => (num / videosData.wholeLength) * 100;
+    return (
+        <>
+            <SliderRail key={0} getRailProps={getRailProps} order={0}/>
+            {
+                videosData.videos.map((video, index) =>
+                    <SliderRail getRailProps={getRailProps} order={index + 1} key={index + 1}
+                                start={getPercentFromWholeVideo(video.relativeStartPoint)}
+                                length={getPercentFromWholeVideo(video.length)}
+                                color={slidersColors[index]}/>)
+            }
+        </>
+    );
+};
+
 const CompoundSlider = ({min, max, ticks, sliderSteps, onUpdatedChanged, onSelectedChanged}) => {
     const [selected, setSelected] = useState(0);
     const [updated, setUpdated] = useState(0);
@@ -30,18 +70,26 @@ const CompoundSlider = ({min, max, ticks, sliderSteps, onUpdatedChanged, onSelec
         <div>
             <Header header={'Selected'} date={selected}/>
             <Header header={'Updated'} date={updated}/>
-            <div style={{margin: '5%', height: 120, width: '90%'}}>
+            <div style={{margin: '5%', height: 30, width: '90%'}}>
                 <Slider
                     mode={1}
                     step={(max - min) / sliderSteps}
                     domain={[+min, +max]}
                     rootStyle={sliderStyle}
-                    onUpdate={([seconds]) => setUpdated(seconds)}
-                    onChange={([seconds]) => setSelected(seconds)}
+                    onUpdate={([seconds]) => {
+                        const rounded = Math.round(seconds);
+                        setUpdated(rounded);
+                        onUpdatedChanged(rounded);
+                    }}
+                    onChange={([seconds]) => {
+                        const rounded = Math.round(seconds);
+                        setSelected(rounded);
+                        onSelectedChanged(rounded);
+                    }}
                     values={[+selected]}
                 >
                     <Rail>
-                        {({getRailProps}) => <SliderRail getRailProps={getRailProps}/>}
+                        {getRailByPropsGenerator(fromMonolo)}
                     </Rail>
                     <Handles>
                         {({handles, getHandleProps}) => (
@@ -96,11 +144,17 @@ CompoundSlider.propTypes = {
     max: PropTypes.number.isRequired,
     ticks: PropTypes.number,
     sliderSteps: PropTypes.number,
+    onUpdatedChanged: PropTypes.func,
+    onSelectedChanged: PropTypes.func,
 };
 CompoundSlider.defaultProps = {
     min: 0,
     ticks: 10,
     sliderSteps: 500,
+    onUpdatedChanged: () => {
+    },
+    onSelectedChanged: () => {
+    },
 };
 
 export default CompoundSlider;

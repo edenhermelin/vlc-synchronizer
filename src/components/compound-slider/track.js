@@ -8,7 +8,7 @@ export const Track = ({source, target, getTrackProps, disabled}) => (
             transform: 'translate(0%, -50%)',
             height: 8,
             zIndex: 1,
-            backgroundColor: disabled ? '#999' : '#444',
+            backgroundColor: 'red',
             borderRadius: 4,
             cursor: 'pointer',
             left: `${source.percent}%`,
