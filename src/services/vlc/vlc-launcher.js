@@ -1,5 +1,5 @@
 const {spawn} = require('child_process');
-const config  = require('./config');
+const config  = require('../../../config');
 class VLCLauncher {
     constructor(telnetPort, telnetPassword, fileToOpen, onError, onClose, vlcStdout, vlcStderr) {
         if (!telnetPort || !telnetPassword) throw new Error('port and password cannot be undefined');
