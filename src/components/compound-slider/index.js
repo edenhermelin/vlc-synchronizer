@@ -36,16 +36,8 @@ const CompoundSlider = ({min, max, ticks, sliderSteps, onUpdatedChanged, onSelec
                     step={(max - min) / sliderSteps}
                     domain={[+min, +max]}
                     rootStyle={sliderStyle}
-                    onUpdate={([seconds]) => {
-                        const rounded = Math.round(seconds);
-                        setUpdated(rounded);
-                        onUpdatedChanged(rounded);
-                    }}
-                    onChange={([seconds]) => {
-                        const rounded = Math.round(seconds);
-                        setSelected(rounded);
-                        onSelectedChanged(rounded);
-                    }}
+                    onUpdate={([seconds]) => setUpdated(seconds)}
+                    onChange={([seconds]) => setSelected(seconds)}
                     values={[+selected]}
                 >
                     <Rail>
@@ -100,21 +92,14 @@ const CompoundSlider = ({min, max, ticks, sliderSteps, onUpdatedChanged, onSelec
 };
 
 CompoundSlider.propTypes = {
+    min: PropTypes.number.isRequired,
     max: PropTypes.number.isRequired,
-    min: PropTypes.number,
     ticks: PropTypes.number,
     sliderSteps: PropTypes.number,
-    onUpdatedChanged: PropTypes.func,
-    onSelectedChanged: PropTypes.func,
 };
 CompoundSlider.defaultProps = {
-    min: 0,
     ticks: 10,
     sliderSteps: 500,
-    onUpdatedChanged: () => {
-    },
-    onSelectedChanged: () => {
-    },
 };
 
 export default CompoundSlider;
